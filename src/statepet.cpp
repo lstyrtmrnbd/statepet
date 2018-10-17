@@ -12,16 +12,10 @@
 
 namespace sml = boost::sml;
 
-namespace {
+namespace { // translation-unit-local types
 
   struct fatten {};
   struct love {};
-  
-  const auto is_ack_valid = []() { return true; };
-  const auto is_fin_valid = []() { return true; };
-
-  const auto send_fin = [] {};
-  const auto send_ack = [] {};
   
   struct pet0 {
     auto operator()() const {
@@ -35,12 +29,10 @@ namespace {
     }
   };
   
-  // "state"_s + event<e_struct> [guard] / action = "state2"_s
-
-  // Send event:
+  //const auto guardExample = []() { return true; };
+  //const auto actionExample = [] {};
+  // "state1"_s + event<e_struct> [guard] / action = "state2"_s
   // sm.process_event(ack{});
-  
-  // Check state:
   // sm.is("fin wait 1"_s);
 }
 
@@ -115,24 +107,17 @@ int main() {
 
       if (event.type == sf::Event::KeyPressed) {
 
-        if (event.key.code == sf::Keyboard::Space) {
-          sm.process_event(fatten{});
-        }
-        if (event.key.code == sf::Keyboard::L) {
-          sm.process_event(love{});
-        }
+        if (event.key.code == sf::Keyboard::Space) sm.process_event(fatten{});
+        if (event.key.code == sf::Keyboard::L) sm.process_event(love{});
       }
       
-      if (event.type == sf::Event::Closed)
-        window.close();
+      if (event.type == sf::Event::Closed) window.close();
     }
 
     sptrAnim anim;
     
     if (sm.is("normal"_s)) anim = petAnims["normal"];
-
     if (sm.is("fat"_s)) anim = petAnims["fat"];
-
     if (sm.is("loved"_s)) anim = petAnims["loved"];
     
     sf::Time frameTime = frameClock.restart();
