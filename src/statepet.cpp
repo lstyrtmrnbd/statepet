@@ -77,17 +77,20 @@ int main() {
   sf::Texture petTex;
   std::unordered_map<std::string, sptrAnim> petAnims;
 
+  auto testPtrMap = std::make_shared<std::unordered_map<std::string, sptrAnim>>();
+  
   std::cout << "Loading images\n";
   
   loadAnimation(petTex, petAnims);
+  loadAnimation(petTex, *testPtrMap);
 
   std::cout << "Loaded images\n";
 
-  for(auto& x: petAnims) {
+  for(auto& x: *testPtrMap) {
       std::cout << x.first << ": " << x.second << std::endl;
   }
 
-  Pet<pet0> pet(std::make_shared<sf::Texture>(petTex), petAnims);
+  Pet<pet0> pet(std::make_shared<sf::Texture>(petTex), testPtrMap);
   
   AnimatedSprite petSprite(sf::seconds(0.1));
   petSprite.setOrigin(16.0, 16.0);
@@ -103,8 +106,8 @@ int main() {
 
       if (event.type == sf::Event::KeyPressed) {
 
-        if (event.key.code == sf::Keyboard::Space) sm.process_event(fatten{});
-        if (event.key.code == sf::Keyboard::L) sm.process_event(love{});
+        if (event.key.code == sf::Keyboard::Space) pet.state.process_event(fatten{});
+        if (event.key.code == sf::Keyboard::L) pet.state.process_event(love{});
       }
       
       if (event.type == sf::Event::Closed) window.close();
@@ -112,9 +115,9 @@ int main() {
 
     sptrAnim anim;
 
-    if (sm.is("normal"_s)) anim = petAnims["normal"];
-    if (sm.is("fat"_s)) anim = petAnims["fat"];
-    if (sm.is("loved"_s)) anim = petAnims["loved"];
+    if (pet.state.is("normal"_s)) anim = pet.getAnimation("normal");
+    if (pet.state.is("fat"_s)) anim = pet.getAnimation("fat");
+    if (pet.state.is("loved"_s)) anim = pet.getAnimation("loved");
     
     sf::Time frameTime = frameClock.restart();
     
