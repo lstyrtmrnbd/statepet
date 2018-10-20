@@ -11,6 +11,8 @@
 
 #include "AnimatedSprite.hpp"
 
+#include "animated.hpp"
+
 using sptrAnim = std::shared_ptr<Animation>;
 using mapType = std::shared_ptr<std::unordered_map<std::string, sptrAnim>>;
 
@@ -19,7 +21,6 @@ template <typename T>
 class Pet {
     
 private:
-
 
   std::shared_ptr<sf::Texture> spriteSheet;
   mapType animMap;

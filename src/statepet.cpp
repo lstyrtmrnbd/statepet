@@ -10,6 +10,7 @@
 
 #include "AnimatedSprite.hpp"
 
+#include "animated.hpp"
 #include "pet.hpp"
 
 namespace sml = boost::sml;
@@ -66,6 +67,17 @@ void loadAnimation (sf::Texture& spriteSheet, std::unordered_map<std::string, sp
   animMap["loved"] = loved;
 }
 
+void loadDoop() {
+
+  sf::Image doopImage;
+  if (!doopImage.loadFromFile("assets/doop0.png")) std::cout << "Doop spritesheet load failed \n";
+
+  frameInfo doopFrames = {sf::Color(255,0,255), 3, 32, 32,
+                          {"normal", "fat", "loved"}, {6, 6, 6}};
+  
+  Animated doop(doopImage, doopFrames);
+}
+
 int main() {
   using namespace sml;
 
@@ -83,6 +95,7 @@ int main() {
   
   loadAnimation(petTex, petAnims);
   loadAnimation(petTex, *testPtrMap);
+  loadDoop();
 
   std::cout << "Loaded images\n";
 
@@ -104,10 +117,14 @@ int main() {
     sf::Event event;
     while (window.pollEvent(event)) {
 
+      // NEED INPUT HANDLER
+      
       if (event.type == sf::Event::KeyPressed) {
 
         if (event.key.code == sf::Keyboard::Space) pet.state.process_event(fatten{});
         if (event.key.code == sf::Keyboard::L) pet.state.process_event(love{});
+
+        if (event.key.code == sf::Keyboard::Escape) window.close();
       }
       
       if (event.type == sf::Event::Closed) window.close();
