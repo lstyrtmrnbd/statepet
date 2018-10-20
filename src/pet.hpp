@@ -8,20 +8,21 @@
 
 #include "AnimatedSprite.hpp"
 
+using sptrAnim = std::shared_ptr<Animation>;
+
 template <typename T>
 class Pet {
 
 private:
 
   boost::sml::sm<T> state;
-
   std::shared_ptr<sf::Texture> spriteSheet;
-
-  std::unordered_map<std::string, Animation> animMap;
+  std::unordered_map<std::string, sptrAnim>& animMap;
   
 public:
 
-  Pet();
-
+  //Pet() = delete;
+  Pet(std::shared_ptr<sf::Texture> spriteSheet,
+      std::unordered_map<std::string, sptrAnim> animMap);
 
 };

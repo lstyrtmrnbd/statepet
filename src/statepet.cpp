@@ -10,35 +10,29 @@
 
 #include "AnimatedSprite.hpp"
 
+#include "pet.hpp"
+
 namespace sml = boost::sml;
 
-namespace { // translation-unit-local types
+struct fatten {};
+struct love {};
+  
+struct pet0 {
+  auto operator()() const {
+    using namespace sml;
+    return make_transition_table (
+                                  *"normal"_s + event<fatten> = "fat"_s,
+                                  "fat"_s + event<fatten> = "normal"_s,
+                                  "normal"_s + event<love> = "loved"_s,
+                                  "loved"_s + event<love> = "normal"_s
+                                  );
+  }
+};
 
-  struct fatten {};
-  struct love {};
-  
-  struct pet0 {
-    auto operator()() const {
-      using namespace sml;
-      return make_transition_table (
-             *"normal"_s + event<fatten> = "fat"_s,
-              "fat"_s + event<fatten> = "normal"_s,
-              "normal"_s + event<love> = "loved"_s,
-              "loved"_s + event<love> = "normal"_s
-             );
-    }
-  };
-  
-  //const auto guardExample = []() { return true; };
-  //const auto actionExample = [] {};
-  // "state1"_s + event<e_struct> [guard] / action = "state2"_s
-  // sm.process_event(ack{});
-  // sm.is("fin wait 1"_s);
-}
 
 using sptrAnim = std::shared_ptr<Animation>;
 
-void loadPet (sf::Texture& spriteSheet, std::unordered_map<std::string, sptrAnim>& animMap) {
+void loadAnimation (sf::Texture& spriteSheet, std::unordered_map<std::string, sptrAnim>& animMap) {
 
   sf::Image image;
   if(!image.loadFromFile("assets/doop0.png")) std::cout << "Failed spritesheet file load\n";
@@ -85,13 +79,15 @@ int main() {
 
   std::cout << "Loading images\n";
   
-  loadPet(petTex, petAnims);
+  loadAnimation(petTex, petAnims);
 
   std::cout << "Loaded images\n";
 
   for(auto& x: petAnims) {
       std::cout << x.first << ": " << x.second << std::endl;
   }
+
+  Pet<pet0> pet(std::make_shared<sf::Texture>(petTex), petAnims);
   
   AnimatedSprite petSprite(sf::seconds(0.1));
   petSprite.setOrigin(16.0, 16.0);
@@ -115,7 +111,7 @@ int main() {
     }
 
     sptrAnim anim;
-    
+
     if (sm.is("normal"_s)) anim = petAnims["normal"];
     if (sm.is("fat"_s)) anim = petAnims["fat"];
     if (sm.is("loved"_s)) anim = petAnims["loved"];
@@ -131,6 +127,7 @@ int main() {
     window.clear();
     window.draw(petSprite);
     window.display();
+    
   }
   
   return 0;
