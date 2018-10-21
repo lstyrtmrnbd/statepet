@@ -8,29 +8,21 @@
 #include "AnimatedSprite.hpp"
 #include "Animation.hpp"
 
-struct frameInfo {
-
-  sf::Color mask;
-  int total, width, height;
-  std::vector<std::string> names; // length = total
-  std::vector<int> counts;        // length = total
-};
+#include "common.h"
 
 class Animated {
-
-  using animMap_t = std::unordered_map<std::string, std::unique_ptr<Animation>>;
   
 private:
 
-  sf::Texture spriteSheet;
-  animMap_t animations;
+  std::shared_ptr<sf::Texture> spriteSheet;
+  std::unique_ptr<animationMap_t> animations;
   AnimatedSprite sprite;
   
 public:
 
-  Animated(sf::Image, frameInfo);
+  Animated(std::shared_ptr<sf::Texture> spriteSheet, animationMap_t*);
   Animation getAnimation(std::string name);
-  void loadAnimations(sf::Image baseImage, frameInfo frameDef);
+  void setAnimation(std::string name);
   
 };
 

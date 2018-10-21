@@ -13,28 +13,19 @@
 
 #include "animated.hpp"
 
-using sptrAnim = std::shared_ptr<Animation>;
-using mapType = std::shared_ptr<std::unordered_map<std::string, sptrAnim>>;
-
 // DECLARATION
 template <typename T>
 class Pet {
     
 private:
 
-  std::shared_ptr<sf::Texture> spriteSheet;
-  mapType animMap;
-  AnimatedSprite sprite; // inherit this from 'animated' class,
-                         // as well as method to load it given frames struct 
+  Animated ani;
   
 public:
 
   boost::sml::sm<T> state;
 
-  Pet(std::shared_ptr<sf::Texture> spriteSheet,
-      mapType animMap);
-
-  sptrAnim getAnimation(std::string name);
+  Pet();
 
 };
 

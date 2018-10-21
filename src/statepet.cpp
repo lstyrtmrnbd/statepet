@@ -12,6 +12,7 @@
 
 #include "animated.hpp"
 #include "pet.hpp"
+#include "visualmanager.hpp"
 
 namespace sml = boost::sml;
 
@@ -67,22 +68,16 @@ void loadAnimation (sf::Texture& spriteSheet, std::unordered_map<std::string, sp
   animMap["loved"] = loved;
 }
 
-void loadDoop() {
-
-  sf::Image doopImage;
-  if (!doopImage.loadFromFile("assets/doop0.png")) std::cout << "Doop spritesheet load failed \n";
-
-  frameInfo doopFrames = {sf::Color(255,0,255), 3, 32, 32,
-                          {"normal", "fat", "loved"}, {6, 6, 6}};
-  
-  Animated doop(doopImage, doopFrames);
-}
-
 int main() {
   using namespace sml;
 
   sm<pet0> sm;
 
+  frameInfo doopFrames = {3, 32, 32,
+                          {"normal", "fat", "loved"},
+                          {6, 6, 6},
+                          sf::Color(255,0,255)};
+  
   sf::Vector2i screenSize(640, 480);
   sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "State Test");
 
