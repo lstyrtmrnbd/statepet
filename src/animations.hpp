@@ -10,7 +10,7 @@
 
 #include "common.h"
 
-class Animated {
+class Animations {
   
 private:
 

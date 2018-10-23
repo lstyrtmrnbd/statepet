@@ -11,7 +11,7 @@
 
 #include "AnimatedSprite.hpp"
 
-#include "animated.hpp"
+#include "animations.hpp"
 
 // DECLARATION
 template <typename T>
@@ -19,28 +19,21 @@ class Pet {
     
 private:
 
-  Animated ani;
+  std::unique_ptr<Animations> anis;
   
 public:
 
   boost::sml::sm<T> state;
 
-  Pet();
+  Pet(Animations*);
 
 };
 
 // IMPLEMENTATION
 
 template <typename T>
-Pet<T>::Pet(std::shared_ptr<sf::Texture> spriteSheet,
-            mapType animMap) : state(boost::sml::sm<T>()), spriteSheet(spriteSheet), animMap(animMap) {
+Pet<T>::Pet(Animations* rawAnis) : anis(rawAnis) {
 
-}
-
-template<typename T>
-sptrAnim Pet<T>::getAnimation(std::string name) {
-
-  return this->animMap->at(name);
 }
 
 #endif // _PET_HPP_

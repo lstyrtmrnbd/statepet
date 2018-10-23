@@ -10,7 +10,7 @@
 
 #include "AnimatedSprite.hpp"
 
-#include "animated.hpp"
+#include "animations.hpp"
 #include "pet.hpp"
 #include "visualmanager.hpp"
 
