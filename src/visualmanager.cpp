@@ -16,7 +16,7 @@ void VisualManager::loadImage(std::string filename, std::string handle) {
   this->images.insert(std::make_pair(handle, image));
 }
 
-animationMap_t* VisualManager::loadAnimations(std::string handle, frameInfo info) {
+Animations* VisualManager::loadAnimations(std::string handle, frameInfo info) {
 
   sf::Image& image = images.at(handle);  
 
@@ -25,9 +25,8 @@ animationMap_t* VisualManager::loadAnimations(std::string handle, frameInfo info
   auto tex = std::make_shared<sf::Texture>();
   tex->loadFromImage(image);
   this->textures.insert(std::make_pair(handle, tex));
-  // method over top of this one to provide animations and texture to an Animated?
   
-  auto animations = new animationMap_t();
+  auto animMap = std::make_unique<animationMap_t>();
   
   for (int i = 0; i < info.total; ++i) {
 
@@ -40,10 +39,10 @@ animationMap_t* VisualManager::loadAnimations(std::string handle, frameInfo info
       anim->addFrame(sf::IntRect(left, info.height * i, info.width, info.height));
     }
 
-    animations->insert(std::make_pair(info.names.at(i), std::move(anim)));
+    animMap->insert(std::make_pair(info.names.at(i), std::move(anim)));
   }
 
-  return animations;
+  return new Animations(tex, std::move(animMap));
 }
 
 

@@ -31,79 +31,28 @@ struct pet0 {
   }
 };
 
-
-using sptrAnim = std::shared_ptr<Animation>;
-
-void loadAnimation (sf::Texture& spriteSheet, std::unordered_map<std::string, sptrAnim>& animMap) {
-
-  sf::Image image;
-  if(!image.loadFromFile("assets/doop0.png")) std::cout << "Failed spritesheet file load\n";
-  image.createMaskFromColor(sf::Color(255,0,255));
-
-  spriteSheet.loadFromImage(image);
-
-  auto normal = std::make_shared<Animation>();
-  normal->setSpriteSheet(spriteSheet);
-  for(int i = 0; i < 6; ++i) {
-    int left = 32 * i;
-    normal->addFrame(sf::IntRect(left, 0, 32, 32));
-  }
-  
-  auto fat = std::make_shared<Animation>();
-  fat->setSpriteSheet(spriteSheet);
-  for(int i = 0; i < 6; ++i) {
-    int left = 32 * i;
-    fat->addFrame(sf::IntRect(left, 32, 32 , 32));
-  }
-  
-  auto loved = std::make_shared<Animation>();
-  loved->setSpriteSheet(spriteSheet);
-  for(int i = 0; i < 6; ++i) {
-    int left = 32 * i;
-    loved->addFrame(sf::IntRect(left, 64, 32, 32));
-  }
-  
-  animMap["normal"] = normal;
-  animMap["fat"] = fat;
-  animMap["loved"] = loved;
-}
-
 int main() {
-  using namespace sml;
+  
+  sf::Vector2i screenSize(640, 480);
+  sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "State Test");
 
-  sm<pet0> sm;
+  auto visman = std::make_unique<VisualManager>();
+  
+  visman->loadImage("assets/doop0.png", "doop");
 
   frameInfo doopFrames = {3, 32, 32,
                           {"normal", "fat", "loved"},
                           {6, 6, 6},
                           sf::Color(255,0,255)};
   
-  sf::Vector2i screenSize(640, 480);
-  sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y), "State Test");
+  Pet<pet0> pet(visman->loadAnimations("doop", doopFrames));
 
-  sf::Texture petTex;
-  std::unordered_map<std::string, sptrAnim> petAnims;
-
-  auto testPtrMap = std::make_shared<std::unordered_map<std::string, sptrAnim>>();
-  
-  std::cout << "Loading images\n";
-  
-  loadAnimation(petTex, petAnims);
-  loadAnimation(petTex, *testPtrMap);
-  loadDoop();
-
-  std::cout << "Loaded images\n";
-
-  for(auto& x: *testPtrMap) {
-      std::cout << x.first << ": " << x.second << std::endl;
-  }
-
-  Pet<pet0> pet(std::make_shared<sf::Texture>(petTex), testPtrMap);
-  
-  AnimatedSprite petSprite(sf::seconds(0.1));
-  petSprite.setOrigin(16.0, 16.0);
-  petSprite.setScale(sf::Vector2f(4.0,4.0));
-  petSprite.setPosition(sf::Vector2f(screenSize / 2));
+  pet.doSprite([screenSize](AnimatedSprite& sprite){
+                 sprite.setFrameTime(sf::seconds(0.1));
+                 sprite.setOrigin(16.0, 16.0);
+                 sprite.setScale(sf::Vector2f(4.0,4.0));
+                 sprite.setPosition(sf::Vector2f(screenSize / 2));
+               });
 
   sf::Clock frameClock = sf::Clock();
 
@@ -125,22 +74,16 @@ int main() {
       if (event.type == sf::Event::Closed) window.close();
     }
 
-    sptrAnim anim;
-
-    if (pet.state.is("normal"_s)) anim = pet.getAnimation("normal");
-    if (pet.state.is("fat"_s)) anim = pet.getAnimation("fat");
-    if (pet.state.is("loved"_s)) anim = pet.getAnimation("loved");
-    
     sf::Time frameTime = frameClock.restart();
-    
-    petSprite.play(*anim);
-    petSprite.update(frameTime);
+        
+    pet.syncAnimationState();
+    pet.update(frameTime);
     
     // physics
 
     // rendition
     window.clear();
-    window.draw(petSprite);
+    window.draw(pet);
     window.display();
     
   }

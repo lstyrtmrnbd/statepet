@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "common.h"
+#include "animations.hpp"
 
 struct frameInfo {
 
@@ -27,7 +28,7 @@ public:
 
   VisualManager();
   void loadImage(std::string filename, std::string handle);
-  animationMap_t* loadAnimations(std::string handle, frameInfo info);
+  Animations* loadAnimations(std::string handle, frameInfo info);
 };
 
 #endif // _VISUAL_MANAGER_HPP_

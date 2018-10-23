@@ -1,5 +1,5 @@
-#ifndef _ANIMATED_HPP_
-#define _ANIMATED_HPP_
+#ifndef _ANIMATIONS_HPP_
+#define _ANIMATIONS_HPP_
 
 #include <memory>
 #include <string>
@@ -20,10 +20,11 @@ private:
   
 public:
 
-  Animated(std::shared_ptr<sf::Texture> spriteSheet, animationMap_t*);
-  Animation getAnimation(std::string name);
+  Animations(std::shared_ptr<sf::Texture> sheet,
+             std::unique_ptr<animationMap_t> anims);
+  Animation& getAnimation(std::string name);
   void setAnimation(std::string name);
   
 };
 
-#endif // _ANIMATED_HPP_
+#endif // _ANIMATIONS_HPP_
